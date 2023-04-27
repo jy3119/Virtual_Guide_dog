@@ -22,6 +22,13 @@ initial_prob = 0.5
 grid_size = int(2 * max_distance / resolution)
 occupancy_grid = np.zeros((grid_size, grid_size))
 
+def is_float(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
 try:
     while True:
         line = ser.readline().decode(errors='ignore').strip()
@@ -32,7 +39,7 @@ try:
 
         if line:
             distances = line.split(',')
-            if len(distances) == 4:
+            if len(distances) == 4 and all(is_float(d) for d in distances):
                 try:
                     distance1 = float(distances[0])
                     distance2 = float(distances[1])
