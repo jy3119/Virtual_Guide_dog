@@ -27,16 +27,6 @@ def read_data_from_arduino():
     return angle, distance
 
 # Parse the data received from Arduino
-# def parse_data(data):
-#     values = data.split(',')
-#     angle = []
-#     distance = []
-
-#     for i in range(0, len(values), 2):
-#         angle.append(int(values[i]))
-#         distance.append(float(values[i + 1]))
-
-#     return angle, distance
 def parse_data(data):
     values = data.split(',')
     angle = []
@@ -65,7 +55,7 @@ def parse_data(data):
     valid_indices = np.where(distance <= 100)[0]
     angle = angle[valid_indices]
     distance = distance[valid_indices]
-    
+
     return angle, distance
 
 # Apply a simple moving average filter to the distance array
@@ -90,7 +80,8 @@ def update_occupancy_grid(angle, distance):
         smoothed_distance = smoothed_distances[i]
         x = int(smoothed_distance * np.cos(np.deg2rad(angle[i])) / cell_size + grid_size / 2)
         y = int(smoothed_distance * np.sin(np.deg2rad(angle[i])) / cell_size + grid_size / 2)
-        occupancy_grid[x, y] = 1
+        if x >= 0 and x < grid_size and y >= 0 and y < grid_size:
+            occupancy_grid[x, y] = 1
 
 # Estimate obstacle size and location based on occupancy grid map
 def estimate_obstacles():
