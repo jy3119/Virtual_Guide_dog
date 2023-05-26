@@ -4,7 +4,7 @@ from KalmanFilter import KalmanFilter
 import mapping
 import time
 
-ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('COM5', 9600)
 ser.flushInput()
 
 #Kalman filter
@@ -50,6 +50,8 @@ try:
                     fd2 = kf2.filter(distance2)
                     fd3 = kf3.filter(distance3)
                     fd4 = kf4.filter(distance4)
+                    
+                    print(fd1, fd2, fd3, fd4)
 
             
             # Robot position and sensor angles

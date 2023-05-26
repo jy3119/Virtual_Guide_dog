@@ -8,7 +8,7 @@ x = 0       #Initial state estimate
 P = 1       #Initial covariance estimate
 K = 0       #Kalman gain
 
-ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('COM5', 9600)
 ser.flushInput()
 
 try:
