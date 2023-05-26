@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Create a serial connection
-ser = serial.Serial('COM5', 9600)  # Change to the correct port
+ser = serial.Serial('/dev/ttyACM0', 9600)  # Change to the correct port
 
 # Grid parameters
 GRID_SIZE = 10

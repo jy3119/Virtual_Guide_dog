@@ -27,15 +27,45 @@ def read_data_from_arduino():
     return angle, distance
 
 # Parse the data received from Arduino
+# def parse_data(data):
+#     values = data.split(',')
+#     angle = []
+#     distance = []
+
+#     for i in range(0, len(values), 2):
+#         angle.append(int(values[i]))
+#         distance.append(float(values[i + 1]))
+
+#     return angle, distance
 def parse_data(data):
     values = data.split(',')
     angle = []
     distance = []
 
     for i in range(0, len(values), 2):
-        angle.append(int(values[i]))
-        distance.append(float(values[i + 1]))
+        if i+1 >= len(values):
+            break
 
+        angle_str = values[i].strip()
+        distance_str = values[i+1].strip()
+
+        if angle_str == '' or distance_str == '':
+            continue
+
+        try:
+            angle.append(int(angle_str))
+            distance.append(float(distance_str))
+        except ValueError:
+            continue
+
+    angle = np.array(angle)
+    distance = np.array(distance)
+
+    # Remove outliers where distances > 100cm
+    valid_indices = np.where(distance <= 100)[0]
+    angle = angle[valid_indices]
+    distance = distance[valid_indices]
+    
     return angle, distance
 
 # Apply a simple moving average filter to the distance array
@@ -53,11 +83,6 @@ def apply_moving_average_filter(distance_array, window_size):
 
 # Update the occupancy grid with obstacle information
 def update_occupancy_grid(angle, distance):
-    # Remove outliers where distances > 100cm
-    valid_indices = np.where(distance <= 100)
-    angle = angle[valid_indices]
-    distance = distance[valid_indices]
-
     # Apply moving average filter to distance values
     smoothed_distances = apply_moving_average_filter(distance, window_size)
 
