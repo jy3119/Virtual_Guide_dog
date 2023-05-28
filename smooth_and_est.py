@@ -78,8 +78,8 @@ def update_occupancy_grid(angle, distance):
 
     for i in range(len(smoothed_distances)):
         smoothed_distance = smoothed_distances[i]
-        x = int(smoothed_distance * np.cos(np.deg2rad(angle[i])) / cell_size + grid_size / 2)
-        y = int(smoothed_distance * np.sin(np.deg2rad(angle[i])) / cell_size + grid_size / 2)
+        x = int(smoothed_distance * np.cos(np.deg2rad(angle[i])) / cell_size + grid_size // 2)
+        y = int(smoothed_distance * np.sin(np.deg2rad(angle[i])) / cell_size + grid_size // 2)
         if x >= 0 and x < grid_size and y >= 0 and y < grid_size:
             occupancy_grid[x, y] = 1
 
@@ -108,10 +108,10 @@ def visualize_map_with_obstacles(obstacles):
     plt.figure(figsize=(8, 8))
     plt.imshow(occupancy_grid, cmap='binary', origin='lower', extent=(-50, 50, -50, 50))
     for obstacle in obstacles:
-        start_x = (obstacle['start_x'] - grid_size / 2) * cell_size
-        start_y = (obstacle['start_y'] - grid_size / 2) * cell_size
-        end_x = (obstacle['end_x'] - grid_size / 2) * cell_size
-        end_y = (obstacle['end_y'] - grid_size / 2) * cell_size
+        start_x = (obstacle['start_x'] - grid_size // 2) * cell_size
+        start_y = (obstacle['start_y'] - grid_size // 2) * cell_size
+        end_x = (obstacle['end_x'] - grid_size // 2) * cell_size
+        end_y = (obstacle['end_y'] - grid_size // 2) * cell_size
         plt.plot([start_y, end_y], [start_x, end_x], 'r-', linewidth=2)
     plt.xlabel('Y (m)')
     plt.ylabel('X (m)')
