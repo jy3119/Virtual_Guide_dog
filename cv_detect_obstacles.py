@@ -9,10 +9,6 @@ camera.resolution = (640, 480)
 camera.framerate = 30
 raw_capture = PiRGBArray(camera, size=(640, 480))
 
-# Load pre-trained cascade classifiers for wall and staircase detection
-wall_cascade = cv2.CascadeClassifier("path/to/wall_cascade.xml")
-staircase_cascade = cv2.CascadeClassifier("path/to/staircase_cascade.xml")
-
 # Allow the camera to warm up
 time.sleep(0.1)
 
@@ -23,17 +19,20 @@ for frame in camera.capture_continuous(raw_capture, format="bgr", use_video_port
     # Convert the frame to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Detect walls
-    walls = wall_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-    for (x, y, w, h) in walls:
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    # Apply edge detection using the Canny algorithm
+    edges = cv2.Canny(gray, threshold1=50, threshold2=150)
 
-    # Detect staircases
-    staircases = staircase_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-    for (x, y, w, h) in staircases:
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+    # Perform contour detection on the edges
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # Display the resulting image with detected obstacles
+    # Filter contours based on area to remove small noisy regions
+    min_contour_area = 100
+    large_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_contour_area]
+
+    # Draw contours on the original image
+    cv2.drawContours(image, large_contours, -1, (0, 255, 0), 2)
+
+    # Display the resulting image with detected obstacles and features
     cv2.imshow("Obstacle Detection", image)
 
     # Clear the stream in preparation for the next frame
